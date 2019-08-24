@@ -32,5 +32,10 @@ io.on("connection", socket => {
 	socket.on("hello", data => {
 		console.log(data);
 	});
-	socket.emit("hello", { message: "hello" });
+	let count = 1;
+	setInterval(() => {
+		console.log("emitting hello")
+		count++
+		socket.emit("hello", { message: `hello ${count}` });
+	}, 2000)
 });

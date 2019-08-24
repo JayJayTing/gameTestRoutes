@@ -9,24 +9,27 @@ let config = {
 	scene: [SceneA]
 };
 
-function GameTest(props) {
-	let socket = props.socket;
-	console.log("OVER HERE", props.socket);
-	socket.emit("hello", { message: "just saying hello" });
-	console.log("OVER HERE");
-	socket.on("hello", data => {
-		console.log(data);
-	});
+const GameTest = ({ messages, respondToServer }) => {
 
-	if (!game) {
-		game = new Phaser.Game(config);
-	} else {
-		console.log("destroying game");
-		game.destroy(true);
-		game = new Phaser.Game(config);
-	}
+	// useEffect(() => {
+		
+	// })
 
-	return <div>game page</div>;
+	// if (!game) {
+	// 	game = new Phaser.Game(config);
+	// } else {
+	// 	console.log("destroying game");
+	// 	game.destroy(true);
+	// 	game = new Phaser.Game(config);
+	// }
+
+	return (
+		<div>
+			<h1>game page with {messages.length} messages</h1>
+			<button onClick={respondToServer}>Emit Message</button>
+			{messages.map(msg => (<p key={msg}>{msg}</p>))}
+		</div>
+	);
 }
 
 export default GameTest;

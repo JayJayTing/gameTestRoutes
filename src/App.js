@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import logo from "./logo.svg";
 import io from "socket.io-client";
@@ -13,7 +13,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 //import Button from "@material-ui/core/Button";
 // import { Socket } from "net";
-const serverPORT = 3001;
+
 
 const useStyles = makeStyles(theme => ({
 	button: {
@@ -24,12 +24,36 @@ const useStyles = makeStyles(theme => ({
 	}
 }));
 
-let socket;
-function App() {
-	const classes = useStyles();
-	if (!socket) {
-		console.log("initializing socket.io from client");
-		socket = io(`:${serverPORT}`);
+
+const App = () => {
+
+	let socket;
+	const serverPORT = 3001;
+
+	const [messages, setMessages] = useState([])
+
+	useEffect(() => {
+		if (!socket) {
+			socket = io(`:${serverPORT}`)
+			setMessages(["started!"])
+		}
+	}, [])
+
+	useEffect(() => {
+		if (socket) {
+			socket.on("hello", (data) => {
+				setMessages(msgs => msgs.concat([data.message]))
+			})
+		}
+	})
+
+	const respondToServer = () => {
+		if (socket) {
+			console.log('responding back')
+			socket.emit("hello", { message: "just responding hello" })
+		} else {
+			console.log("socket is false")
+		}
 	}
 
 	return (
@@ -43,7 +67,11 @@ function App() {
 					path="/gametest"
 					exact
 					render={() => {
-						return <GameTest socket={socket} />;
+						return (
+							<GameTest
+								messages={messages}
+								respondToServer={respondToServer}
+							/>);
 					}}
 				/>
 			</Switch>
